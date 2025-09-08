@@ -1,7 +1,11 @@
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.City;
+using Repository.Region;
 using Repository.User;
 using Service.Auth;
+using Service.City;
+using Service.Region;
 
 namespace Api.Configuration;
 
@@ -64,10 +68,15 @@ public class ServicesConfiguration(IConfiguration configuration)
     
     private static void ConfigureDependencies(IServiceCollection service)
     {
+        
+        service.AddScoped<IUserRepository, UserRepository>();
+        service.AddScoped<ICityRepository, CityRepository>();
+        service.AddScoped<IRegionRepository, RegionRepository>();
+        
+        
         //Services
         service.AddScoped<IAuthService, AuthService>();
-        service.AddScoped<IUserRepository, UserRepository>();
-        
-        
+        service.AddScoped<ICityService, CityService>();
+        service.AddScoped<IRegionService, RegionService>();
     }
 }

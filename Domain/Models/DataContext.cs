@@ -21,6 +21,7 @@ public class DataContext : DbContext
     public DbSet<Service> Services { get; set; }
     public DbSet<Specialization> Specializations { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Region> Regions { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
