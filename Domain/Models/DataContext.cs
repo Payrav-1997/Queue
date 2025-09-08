@@ -1,10 +1,13 @@
+using Domain.Configurations;
 using Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models;
 
-public class DataContext(DbContextOptions options) : DbContext
+public class DataContext : DbContext
 {
+    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+   
     public DbSet<Employee> Employees { get; set; }
     public DbSet<City> Cities { get; set; }
     public DbSet<Organization> Organizations { get; set; }
@@ -17,5 +20,15 @@ public class DataContext(DbContextOptions options) : DbContext
     public DbSet<Position> Positions { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<Specialization> Specializations { get; set; }
-    public DbSet<User?> Users { get; set; }
+    public DbSet<User> Users { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeeOrganizationConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeePositionConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeeServiceConfiguration());
+        modelBuilder.ApplyConfiguration(new OrganizationSpecializationConfiguration());
+        base.OnModelCreating(modelBuilder);
+    }
 }

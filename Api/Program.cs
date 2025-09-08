@@ -1,18 +1,15 @@
 using Api.Configuration;
 using Api.Middlewares;
+using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+var servicesConfigurator = new ServicesConfiguration(builder.Configuration);
+servicesConfigurator.Configure(builder.Services);
+
 builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-var serviceConfiguration = new ServicesConfiguration();
-
-serviceConfiguration.Configure(builder.Services);
 
 //Swagger config
 builder.Services.AddSwaggerGen(options =>
@@ -42,12 +39,27 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    await dataContext.Database.EnsureDeletedAsync();
+    await dataContext.Database.MigrateAsync();
 }
+
+
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseHttpsRedirection();
+app.UseCors("_corsOrigins");
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();

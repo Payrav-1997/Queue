@@ -5,21 +5,18 @@ using Service.Auth;
 
 namespace Api.Configuration;
 
-public class ServicesConfiguration
+public class ServicesConfiguration(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .Build();
-
     public void Configure(IServiceCollection services)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        services.AddHttpClient();
+       // services.AddHttpClient();
         // ConfigureRedis(services);
         ConfigureModules(services);
         ConfigureCors(services);
         ConfigureDependencies(services);
        // ConfigureSignalR(services);
+       services.AddControllers();
     }
 
     // private void ConfigureSignalR(IServiceCollection services)
@@ -32,7 +29,7 @@ public class ServicesConfiguration
        // services.Configure<EmailSetting>(_configuration.GetSection("EmailSettings"));
 
         services.AddDbContext<DataContext>(builder =>
-            builder.UseNpgsql(_configuration.GetConnectionString("PostgresConnectionString")));
+            builder.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString")));
     }
 
     // private void ConfigureRedis(IServiceCollection services)
@@ -63,11 +60,6 @@ public class ServicesConfiguration
                 });
         });
 
-    }
-
-    public IConfiguration GetConfig()
-    {
-        return _configuration;
     }
     
     private static void ConfigureDependencies(IServiceCollection service)

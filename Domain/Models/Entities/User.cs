@@ -7,6 +7,7 @@ public class User : Entity
     public string FullName { get; set; }
     public string Phone { get; set; }
     public DateTime? BirthDate { get; set; }
+    public string PasswordHash { get; set; }
 
     public static UserVm Entity(User user)
     {

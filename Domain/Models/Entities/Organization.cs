@@ -13,4 +13,5 @@ public class Organization : Entity
     
     public ICollection<OrganizationSpecialization> Specializations { get; set; }
     public ICollection<OrganizationFeedback> Feedbacks { get; set; }
+    public ICollection<EmployeeOrganization> Employees { get; set; }
 }
